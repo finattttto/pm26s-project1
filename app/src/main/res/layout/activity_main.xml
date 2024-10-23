@@ -8,13 +8,25 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Início"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:paddingStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <TextView
         android:id="@+id/tvLatitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Latitude"
         android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"/>
 
     <EditText
         android:id="@+id/etLatitude"
@@ -46,6 +58,26 @@
         app:layout_constraintTop_toBottomOf="@+id/tvLongitude"
         android:textColorHint="#0D6E63"
         android:importantForAutofill="no" />
+
+    <Button
+        android:id="@+id/btnGoToMaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mapa"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnGoToGalery"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btnGoToGalery"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/galeria"
+        app:layout_constraintStart_toStartOf="@id/btnGoToMaps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

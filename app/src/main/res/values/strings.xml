@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Registro Turistico</string>
+    <string name="mapa">Mapa</string>
+    <string name="galeria">Galeria</string>
 </resources>
