@@ -13,6 +13,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 
+import android.view.View
+import androidx.activity.enableEdgeToEdge
+
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 
 class MainActivity : AppCompatActivity(), LocationListener {
@@ -22,11 +28,16 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     private lateinit var locationManager : LocationManager
 
-    private lateinit var btnGoToMaps: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         tvLatitude = findViewById( R.id.etLatitude )
         tvLongitude = findViewById( R.id.etLongitude )
@@ -57,14 +68,22 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 0, 0f, this );
         }
 
-        btnGoToMaps = findViewById(R.id.btnGoToMaps)
+    }
 
-        btnGoToMaps.setOnClickListener {
-            val intent = Intent(this, MapsActivity::class.java)
-            startActivity(intent)
+    fun btVerMapaOnClick(view: View) {
+        val intent = Intent(this, MapsActivity::class.java)
+
+        val latitude = tvLatitude.text.toString().toDoubleOrNull()
+        val longitude = tvLongitude.text.toString().toDoubleOrNull()
+
+        if (latitude != null && longitude != null) {
+            intent.putExtra("latitude", latitude)
+            intent.putExtra("longitude", longitude)
         }
 
+        startActivity(intent)
     }
+
 
     override fun onLocationChanged(location: Location) {
         tvLatitude.text = location.latitude.toString()

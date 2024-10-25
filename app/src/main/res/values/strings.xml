@@ -2,4 +2,6 @@
     <string name="app_name">Registro Turistico</string>
     <string name="mapa">Mapa</string>
     <string name="galeria">Galeria</string>
+    <string name="title_activity_maps2">MapsActivity2</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>
