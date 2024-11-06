@@ -8,16 +8,17 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-
 import android.view.View
 import androidx.activity.enableEdgeToEdge
-
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 
@@ -84,9 +85,72 @@ class MainActivity : AppCompatActivity(), LocationListener {
         startActivity(intent)
     }
 
+    fun btGoToGaleryOnClick(view: View) {
+        val intent = Intent(this, GaleryActivity::class.java)
+        startActivity(intent)
+    }
 
     override fun onLocationChanged(location: Location) {
         tvLatitude.text = location.latitude.toString()
         tvLongitude.text = location.longitude.toString()
     }
+
+    private fun fazerRequisicaoHttp(urlString: String): String? {
+        return try {
+            val url = URL(urlString)
+            val urlConnection = url.openConnection()
+            val inputStream = urlConnection.getInputStream()
+            val entrada = BufferedReader(InputStreamReader(inputStream))
+
+            val dados = StringBuilder()
+            var linha = entrada.readLine()
+            while (linha != null) {
+                dados.append(linha)
+                linha = entrada.readLine()
+            }
+            dados.toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    private fun mostrarErro(mensagem: String) {
+        runOnUiThread {
+            AlertDialog.Builder(this)
+                .setTitle("Erro")
+                .setMessage(mensagem)
+                .setNeutralButton("OK", null)
+                .show()
+        }
+    }
+
+    fun btVerEnderecoOnClick(view: View) {
+        val latitude = tvLatitude.text.toString().toDoubleOrNull()
+        val longitude = tvLongitude.text.toString().toDoubleOrNull()
+
+        if (latitude != null && longitude != null) {
+            Thread {
+                val endereco = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=${tvLatitude.text.toString()},${tvLongitude.text.toString()}&key=AIzaSyABWyLQa1HmxEQuzy6K1_hRv_zarJFExYk"
+                val dados = fazerRequisicaoHttp(endereco)
+
+                val local = dados?.substring(
+                    dados.indexOf("<formatted_address>") + 19,
+                    dados.indexOf("</formatted_address>")
+                )
+
+                runOnUiThread {
+                    val dialog = AlertDialog.Builder(this)
+                    dialog.setTitle("Endereço:")
+                    dialog.setMessage(local ?: "Endereço não encontrado.")
+                    dialog.setNeutralButton("OK", null)
+                    dialog.setCancelable(false)
+                    dialog.show()
+                }
+            }.start()
+        } else {
+            mostrarErro("Coordenadas inválidas.")
+        }
+    }
+    //
 }
