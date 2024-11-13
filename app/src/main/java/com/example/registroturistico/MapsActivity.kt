@@ -1,9 +1,12 @@
 package com.example.registroturistico
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.preference.Preference
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -16,13 +19,23 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 
+private const val SETTINGS_PATH = "com.example.registroturistico_preferences"
+
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
 
+    private lateinit var sharedPreference: SharedPreferences
+    private var zoom = 15f
+    private lateinit var mapa: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPreference = getSharedPreferences(SETTINGS_PATH, Context.MODE_PRIVATE);
+        zoom = sharedPreference.getString("zoom_padrao", "15").toString().toFloat();
+        mapa = sharedPreference.getString("tipo_mapa", "ROADMAP").toString();
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -48,6 +61,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        when (mapa) {
+            "SATELLITE" -> {
+                mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE;
+            }
+            "HYBRID" -> {
+                mMap.mapType = GoogleMap.MAP_TYPE_HYBRID;
+            }
+            "TERRAIN" -> {
+                mMap.mapType = GoogleMap.MAP_TYPE_TERRAIN;
+            }
+            else -> {
+                mMap.mapType = GoogleMap.MAP_TYPE_NORMAL;
+            }
+        }
+
         val latitude = intent.getDoubleExtra("latitude", Double.NaN)
         val longitude = intent.getDoubleExtra("longitude", Double.NaN)
         val coordenadas = intent.getParcelableArrayListExtra<LatLng>("coordenadas")
@@ -55,19 +83,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (!latitude.isNaN() && !longitude.isNaN()) {
             val currentLocation = LatLng(latitude, longitude)
             mMap.addMarker(MarkerOptions().position(currentLocation).title("Minha Localização"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, zoom))
         }
 
         coordenadas?.forEach { local ->
             mMap.addMarker(MarkerOptions().position(local).title("Ponto de Interesse"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local, 15f))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local, zoom))
         }
     }
 
 
     fun buscarPontosDeInteresse(latitude: Double, longitude: Double, tipo: String) {
-        val apiKey = "AIzaSyABWyLQa1HmxEQuzy6K1_hRv_zarJFExYk"
-        val url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=$tipo&key=$apiKey"
+//        val apiKey = "AIzaSyABWyLQa1HmxEQuzy6K1_hRv_zarJFExYk"
+        val url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=$tipo&key=$API_KEY_GEO"
 
         Thread {
             try {

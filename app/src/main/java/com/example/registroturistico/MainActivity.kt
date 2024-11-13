@@ -21,6 +21,7 @@ import java.io.InputStreamReader
 import java.net.URL
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+public const val API_KEY_GEO = "AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU";
 
 class MainActivity : AppCompatActivity(), LocationListener {
 
@@ -44,7 +45,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
         tvLongitude = findViewById( R.id.etLongitude )
 
         locationManager = getSystemService( Context.LOCATION_SERVICE ) as LocationManager
-
 
         ActivityCompat.requestPermissions(
             this,
@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         tvLatitude.text = location.latitude.toString()
         tvLongitude.text = location.longitude.toString()
+        locationManager.removeUpdates(this)
     }
 
     private fun fazerRequisicaoHttp(urlString: String): String? {
@@ -131,7 +132,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
         if (latitude != null && longitude != null) {
             Thread {
-                val endereco = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=${tvLatitude.text.toString()},${tvLongitude.text.toString()}&key=AIzaSyABWyLQa1HmxEQuzy6K1_hRv_zarJFExYk"
+                val endereco = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=${tvLatitude.text.toString()},${tvLongitude.text.toString()}&key=${API_KEY_GEO}"
                 val dados = fazerRequisicaoHttp(endereco)
 
                 val local = dados?.substring(
@@ -151,6 +152,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
         } else {
             mostrarErro("Coordenadas inválidas.")
         }
+    }
+
+    fun btGoToCfgOnClick(view: View) {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
     //
 }

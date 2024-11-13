@@ -15,7 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RegistroTuristico"
         tools:targetApi="31">
-
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
 
@@ -30,6 +33,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU" />
+
         <activity
             android:name=".MapsActivity"
             android:exported="false"

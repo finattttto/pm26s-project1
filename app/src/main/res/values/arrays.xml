@@ -1,0 +1,32 @@
+<resources>
+    <!-- Reply Preference -->
+    <string-array name="zoom_entries">
+        <item>2X</item>
+        <item>5X</item>
+        <item>10X</item>
+        <item>15X</item>
+        <item>18X</item>
+    </string-array>
+
+    <string-array name="zoom_values">
+        <item>2f</item>
+        <item>5f</item>
+        <item>10f</item>
+        <item>15f</item>
+        <item>18f</item>
+    </string-array>
+
+    <string-array name="mapas_entries">
+        <item>Padrão</item>
+        <item>Satélite</item>
+        <item>Relevo</item>
+        <item>Hibrido</item>
+    </string-array>
+
+    <string-array name="mapas_values">
+        <item>ROADMAP</item>
+        <item>SATELLITE</item>
+        <item>TERRAIN</item>
+        <item>HYBRID</item>
+    </string-array>
+</resources>
