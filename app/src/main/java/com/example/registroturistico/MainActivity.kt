@@ -1,17 +1,21 @@
 package com.example.registroturistico
 
 import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.view.View
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
@@ -21,7 +25,7 @@ import java.io.InputStreamReader
 import java.net.URL
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
-public const val API_KEY_GEO = "AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU";
+public const val API_KEY_GEO = "AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU"
 
 class MainActivity : AppCompatActivity(), LocationListener {
 
@@ -29,6 +33,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private lateinit var tvLongitude : TextView
 
     private lateinit var locationManager : LocationManager
+
+    private val CAMERA_REQUEST_CODE = 2
+    private lateinit var photoUri: Uri
+    private val photoUris = mutableListOf<Uri>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -87,7 +95,33 @@ class MainActivity : AppCompatActivity(), LocationListener {
 
     fun btGoToGaleryOnClick(view: View) {
         val intent = Intent(this, GaleryActivity::class.java)
+        intent.putParcelableArrayListExtra("photoUris", ArrayList(photoUris))
         startActivity(intent)
+    }
+
+    private fun createImageUri(): Uri {
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, "foto_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        }
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+            obterEnderecoAtual { endereco ->
+                Toast.makeText(this, "Foto salva na galeria!\nEndereço: $endereco", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    fun btGoToCamera(view: View) {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        photoUri = createImageUri()
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+        photoUris.add(photoUri)
     }
 
     override fun onLocationChanged(location: Location) {
@@ -126,31 +160,37 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
     }
 
-    fun btVerEnderecoOnClick(view: View) {
+    private fun obterEnderecoAtual(callback: (String) -> Unit) {
         val latitude = tvLatitude.text.toString().toDoubleOrNull()
         val longitude = tvLongitude.text.toString().toDoubleOrNull()
 
         if (latitude != null && longitude != null) {
             Thread {
-                val endereco = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=${tvLatitude.text.toString()},${tvLongitude.text.toString()}&key=${API_KEY_GEO}"
-                val dados = fazerRequisicaoHttp(endereco)
+                val enderecoUrl = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=$latitude,$longitude&key=$API_KEY_GEO"
+                val dados = fazerRequisicaoHttp(enderecoUrl)
 
                 val local = dados?.substring(
                     dados.indexOf("<formatted_address>") + 19,
                     dados.indexOf("</formatted_address>")
-                )
+                ) ?: "Endereço não encontrado."
 
                 runOnUiThread {
-                    val dialog = AlertDialog.Builder(this)
-                    dialog.setTitle("Endereço:")
-                    dialog.setMessage(local ?: "Endereço não encontrado.")
-                    dialog.setNeutralButton("OK", null)
-                    dialog.setCancelable(false)
-                    dialog.show()
+                    callback(local)
                 }
             }.start()
         } else {
-            mostrarErro("Coordenadas inválidas.")
+            callback("Coordenadas inválidas.")
+        }
+    }
+
+    fun btVerEnderecoOnClick(view: View) {
+        obterEnderecoAtual { endereco ->
+            AlertDialog.Builder(this)
+                .setTitle("Endereço:")
+                .setMessage(endereco)
+                .setNeutralButton("OK", null)
+                .setCancelable(false)
+                .show()
         }
     }
 
@@ -158,5 +198,4 @@ class MainActivity : AppCompatActivity(), LocationListener {
         val intent = Intent(this, SettingsActivity::class.java)
         startActivity(intent)
     }
-    //
 }

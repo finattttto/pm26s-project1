@@ -100,13 +100,24 @@
         android:textSize="16sp" />
 
     <Button
+        android:text="Tirar Foto"
+        android:onClick="btGoToCamera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:padding="12dp"
+        android:backgroundTint="#6200EE"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp" />
+
+    <Button
         android:text="@string/configura_es"
         android:onClick="btGoToCfgOnClick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:padding="12dp"
-        android:backgroundTint="#FF9800"
+        android:backgroundTint="#FF1000"
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
 </LinearLayout>

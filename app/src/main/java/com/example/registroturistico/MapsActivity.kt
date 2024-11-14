@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
-import androidx.preference.Preference
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -40,7 +39,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -92,9 +90,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
     fun buscarPontosDeInteresse(latitude: Double, longitude: Double, tipo: String) {
-//        val apiKey = "AIzaSyABWyLQa1HmxEQuzy6K1_hRv_zarJFExYk"
         val url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=$tipo&key=$API_KEY_GEO"
 
         Thread {
@@ -139,5 +135,5 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }.start()
     }
-    //-22.95198 -43.2105 rio
+    //-22.9519 -43.2105 rio
 }
