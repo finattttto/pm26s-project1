@@ -12,13 +12,15 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
     <Button
+        android:id="@+id/btVerPontosDeInteresse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pontos de Interesse"
-        android:id="@+id/btVerPontosDeInteresse"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="7dp"
+        android:backgroundTint="#007BFF"
         android:padding="12dp"
-        android:backgroundTint="#FF0000"
+        android:text="@string/minhas_localizacoes"
         android:textColor="#FFFFFF"
         android:textSize="16sp" />
 </RelativeLayout>

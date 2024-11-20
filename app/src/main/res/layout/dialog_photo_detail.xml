@@ -17,4 +17,42 @@
         android:paddingTop="16dp"
         android:text="Informações da Foto"
         android:textSize="16sp" />
+    <TextView
+        android:id="@+id/tvDialogDate"
+        android:layout_width="377dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:text="Tirada em:"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btnDelete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:padding="8dp"
+            android:backgroundTint="#FF5555"
+            android:text="Apagar"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/btnViewOnMap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:padding="8dp"
+            android:backgroundTint="#007BFF"
+            android:text="Ver no mapa"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp" />
+    </LinearLayout>
+
 </LinearLayout>

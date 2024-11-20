@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import com.example.registroturistico.database.DatabaseHandler
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -13,6 +14,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.registroturistico.databinding.ActivityMapsBinding
+import com.example.sistemacontrolefinancas.entity.Localizacao
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -28,6 +31,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var sharedPreference: SharedPreferences
     private var zoom = 15f
     private lateinit var mapa: String
+    private var _id: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +47,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        _id = intent.getIntExtra("_id", -1)
+
         binding.btVerPontosDeInteresse.setOnClickListener {
-
-            binding.btVerPontosDeInteresse.visibility = View.GONE
-
-            val latitude = intent.getDoubleExtra("latitude", Double.NaN)
-            val longitude = intent.getDoubleExtra("longitude", Double.NaN)
-
-            if (!latitude.isNaN() && !longitude.isNaN()) {
-                buscarPontosDeInteresse(latitude, longitude, "tourist_attraction, museum, restaurant, cafe, park, point_of_interest")
-            }
+            carregarLocalizacoes()
         }
     }
 
@@ -74,66 +72,59 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
+        // precisa inicializar o mapa pra carregar
+        if (_id > -1) {
+            binding.btVerPontosDeInteresse.visibility = View.GONE
+            return carregarLocalizacoes()
+        }
+
         val latitude = intent.getDoubleExtra("latitude", Double.NaN)
         val longitude = intent.getDoubleExtra("longitude", Double.NaN)
-        val coordenadas = intent.getParcelableArrayListExtra<LatLng>("coordenadas")
 
         if (!latitude.isNaN() && !longitude.isNaN()) {
             val currentLocation = LatLng(latitude, longitude)
             mMap.addMarker(MarkerOptions().position(currentLocation).title("Minha Localização"))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, zoom))
         }
-
-        coordenadas?.forEach { local ->
-            mMap.addMarker(MarkerOptions().position(local).title("Ponto de Interesse"))
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(local, zoom))
-        }
     }
 
-    fun buscarPontosDeInteresse(latitude: Double, longitude: Double, tipo: String) {
-        val url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=$latitude,$longitude&radius=1500&type=$tipo&key=$API_KEY_GEO"
+     private fun carregarLocalizacoes() {
+        try {
+            val dbHandler = DatabaseHandler(this)
+            var localizacoes: List<Localizacao> = dbHandler.getListLocalizacoes()
 
-        Thread {
-            try {
-                val urlConnection = URL(url).openConnection()
-                val inputStream = urlConnection.getInputStream()
-                val reader = BufferedReader(InputStreamReader(inputStream))
-                val resultado = StringBuilder()
-                var linha = reader.readLine()
+            if (_id > -1) {
+                // caso tenha o ID, ele vai filtrar pra mostrar apenas ela
+                localizacoes = localizacoes.filter { it._id == _id }
+            }
 
-                while (linha != null) {
-                    resultado.append(linha)
-                    linha = reader.readLine()
-                }
-
-                val json = JSONObject(resultado.toString())
-                val resultados = json.getJSONArray("results")
-
+            if (localizacoes.isNotEmpty()) {
                 runOnUiThread {
-                    for (i in 0 until resultados.length()) {
-                        val lugar = resultados.getJSONObject(i)
-                        val nome = lugar.getString("name")
-                        val endereco = lugar.optString("vicinity", "Endereço não disponível")
-                        val location = lugar.getJSONObject("geometry").getJSONObject("location")
-                        val lat = location.getDouble("lat")
-                        val lng = location.getDouble("lng")
+                    localizacoes.forEach { localizacao ->
+                        val latLng = LatLng(localizacao.latitude, localizacao.longitude)
+                        val markerOptions = MarkerOptions()
+                            .position(latLng)
+                            .title(localizacao.nome)
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
 
-                        val latLng = LatLng(lat, lng)
-                        mMap.addMarker(MarkerOptions().position(latLng).title(nome))
+                        mMap.addMarker(markerOptions)
                     }
-                }
 
-            } catch (e: Exception) {
-                e.printStackTrace()
+                    val primeiraLocalizacao = localizacoes.first()
+                    val primeiroPonto = LatLng(primeiraLocalizacao.latitude, primeiraLocalizacao.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(primeiroPonto, zoom))
+                }
+            } else {
                 runOnUiThread {
                     val dialog = AlertDialog.Builder(this)
-                    dialog.setTitle("Erro")
-                    dialog.setMessage("Não foi possível buscar pontos de interesse.")
+                    dialog.setTitle("Sem Localizações")
+                    dialog.setMessage("Nenhuma localização foi encontrada.")
                     dialog.setNeutralButton("OK", null)
                     dialog.show()
                 }
             }
-        }.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
-    //-22.9519 -43.2105 rio
 }

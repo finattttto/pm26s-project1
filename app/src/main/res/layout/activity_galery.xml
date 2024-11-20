@@ -16,7 +16,7 @@ tools:context=".GaleryActivity">
     android:textSize="28sp"
     android:textStyle="bold"
     android:paddingStart="16dp"
-    android:layout_marginTop="16dp" />
+    android:layout_marginTop="25dp" />
 
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/rvGallery"
