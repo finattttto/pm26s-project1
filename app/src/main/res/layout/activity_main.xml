@@ -11,113 +11,76 @@
     android:padding="16dp"
     android:background="#FAFAFA">
 
-
     <TextView
         android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="261dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="30dp"
+        android:drawableLeft="@drawable/ic_location"
         android:paddingStart="16dp"
-        android:text="Início"
+        android:text="Meus Pontos Turisticos"
         android:textSize="28sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Latitude:"
-        android:textSize="16sp"
-        android:textColor="#333333"
-        android:layout_marginTop="8dp" />
-
-    <EditText
-        android:id="@+id/etLatitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberSigned|numberDecimal"
-        android:hint="Digite a latitude"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:padding="10dp"
-        android:backgroundTint="#6200EE"
-        android:textColor="#333333"
-        android:textColorHint="#888888" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Longitude:"
-        android:textSize="16sp"
-        android:textColor="#333333"
-        android:layout_marginTop="8dp" />
-
-    <EditText
-        android:id="@+id/etLongitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberSigned|numberDecimal"
-        android:hint="Digite a longitude"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="16dp"
-        android:padding="10dp"
-        android:backgroundTint="#6200EE"
-        android:textColor="#333333"
-        android:textColorHint="#888888" />
-
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:text="Ver Endereço"
-        android:onClick="btVerEnderecoOnClick"
         android:layout_marginTop="16dp"
+        android:backgroundTint="#2196F3"
+        android:onClick="btVerEnderecoOnClick"
         android:padding="12dp"
-        android:backgroundTint="#03A9F4"
+        android:text="Ver Endereço"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_my_location" />
 
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:text="Ver Mapa"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#2196F3"
         android:onClick="btVerMapaOnClick"
-        android:layout_marginTop="8dp"
         android:padding="12dp"
-        android:backgroundTint="#4CAF50"
+        android:text="Ver Mapa"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_map" />
 
     <Button
-        android:text="@string/galeria"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#2196F3"
         android:onClick="btGoToGaleryOnClick"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:padding="12dp"
-        android:backgroundTint="#FF9800"
+        android:text="@string/galeria"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_gallery" />
 
     <Button
-        android:text="Tirar Foto"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#2196F3"
         android:onClick="btGoToCamera"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:padding="12dp"
-        android:backgroundTint="#6200EE"
+        android:text="Tirar Foto"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_camera" />
 
     <Button
-        android:text="@string/configura_es"
-        android:onClick="btGoToCfgOnClick"
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:backgroundTint="#2196F3"
+        android:onClick="btGoToCfgOnClick"
         android:padding="12dp"
-        android:backgroundTint="#FF1000"
+        android:text="@string/configura_es"
         android:textColor="#FFFFFF"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:drawableLeft="@drawable/ic_settings" />
 </LinearLayout>

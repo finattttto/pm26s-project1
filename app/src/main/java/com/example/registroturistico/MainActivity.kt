@@ -38,14 +38,14 @@ public const val API_KEY_GEO = "AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU"
 
 class MainActivity : AppCompatActivity(), LocationListener {
 
-    private lateinit var tvLatitude : TextView
-    private lateinit var tvLongitude : TextView
-
     private lateinit var locationManager : LocationManager
 
     private val CAMERA_REQUEST_CODE = 2
     private lateinit var photoUri: Uri
     private val photoUris = mutableListOf<Uri>()
+
+    private var latitude = 0.0
+    private var longitude = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -57,9 +57,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        tvLatitude = findViewById( R.id.etLatitude )
-        tvLongitude = findViewById( R.id.etLongitude )
 
         locationManager = getSystemService( Context.LOCATION_SERVICE ) as LocationManager
 
@@ -91,9 +88,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
     fun btVerMapaOnClick(view: View) {
         val intent = Intent(this, MapsActivity::class.java)
 
-        val latitude = tvLatitude.text.toString().toDoubleOrNull()
-        val longitude = tvLongitude.text.toString().toDoubleOrNull()
-
         if (latitude != null && longitude != null) {
             intent.putExtra("latitude", latitude)
             intent.putExtra("longitude", longitude)
@@ -103,8 +97,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
     override fun onLocationChanged(location: Location) {
-        tvLatitude.text = location.latitude.toString()
-        tvLongitude.text = location.longitude.toString()
+        latitude = location.latitude
+        longitude = location.longitude
         locationManager.removeUpdates(this)
     }
 
@@ -129,9 +123,6 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
     private fun obterEnderecoAtual(callback: (String) -> Unit) {
-        val latitude = tvLatitude.text.toString().toDoubleOrNull()
-        val longitude = tvLongitude.text.toString().toDoubleOrNull()
-
         if (latitude != null && longitude != null) {
             Thread {
                 val enderecoUrl = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=$latitude,$longitude&key=$API_KEY_GEO"
@@ -193,8 +184,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
             obterEnderecoAtual { endereco ->
                 val localizacao = Localizacao(
                     _id = 0,
-                    longitude = tvLongitude.text.toString().toDouble(),
-                    latitude = tvLatitude.text.toString().toDouble(),
+                    longitude = longitude,
+                    latitude = latitude,
                     nome = endereco ?: "Sem nome",
                     dataAdd = getCurrentDateTime(),
                     imageUri = photoUri.toString()
