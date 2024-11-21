@@ -16,10 +16,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.registroturistico.databinding.ActivityMapsBinding
 import com.example.sistemacontrolefinancas.entity.Localizacao
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.URL
 
 private const val SETTINGS_PATH = "com.example.registroturistico_preferences"
 
@@ -89,7 +85,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
      private fun carregarLocalizacoes() {
-        try {
+         binding.btVerPontosDeInteresse.visibility = View.GONE
+         try {
             val dbHandler = DatabaseHandler(this)
             var localizacoes: List<Localizacao> = dbHandler.getListLocalizacoes()
 

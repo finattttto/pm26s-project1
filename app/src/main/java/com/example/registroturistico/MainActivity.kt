@@ -9,16 +9,13 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -28,10 +25,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
+import android.app.ProgressDialog
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 1
 public const val API_KEY_GEO = "AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU"
@@ -47,6 +43,8 @@ class MainActivity : AppCompatActivity(), LocationListener {
     private var latitude = 0.0
     private var longitude = 0.0
 
+    private lateinit var progressDialog: ProgressDialog
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -59,6 +57,11 @@ class MainActivity : AppCompatActivity(), LocationListener {
         }
 
         locationManager = getSystemService( Context.LOCATION_SERVICE ) as LocationManager
+
+        progressDialog = ProgressDialog(this).apply {
+            setMessage("Obtendo localização...")
+            setCancelable(false)
+        }
 
         ActivityCompat.requestPermissions(
             this,
@@ -79,6 +82,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ) {
             return;
         } else {
+            progressDialog.show()
             locationManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER,
                 0, 0f, this );
         }
@@ -99,6 +103,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     override fun onLocationChanged(location: Location) {
         latitude = location.latitude
         longitude = location.longitude
+        progressDialog.dismiss()
         locationManager.removeUpdates(this)
     }
 
