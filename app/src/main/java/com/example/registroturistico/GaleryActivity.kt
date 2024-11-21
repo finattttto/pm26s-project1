@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -70,18 +71,24 @@ class GaleryActivity : AppCompatActivity() {
 
         val imageView = dialogView.findViewById<ImageView>(R.id.ivDialogPhoto)
         val textViewInfo = dialogView.findViewById<TextView>(R.id.tvDialogInfo)
+        val textViewDescricao = dialogView.findViewById<TextView>(R.id.tvDescricao)
         val textViewDate = dialogView.findViewById<TextView>(R.id.tvDialogDate)
         val btnDelete = dialogView.findViewById<Button>(R.id.btnDelete)
+        val btnEdit = dialogView.findViewById<Button>(R.id.btnEdit)
         val btnViewOnMap = dialogView.findViewById<Button>(R.id.btnViewOnMap)
+
 
         val imageUri = Uri.parse(localizacao.imageUri)
         imageView.setImageURI(imageUri)
         textViewInfo.text = localizacao.nome
-        textViewDate.text = localizacao.dataAdd.toString();
+        textViewDate.text = localizacao.dataAdd.toString()
+        textViewDescricao.text = localizacao.descricao
 
         btnDelete.setOnClickListener {
             showDeleteDialog(localizacao)
         }
+
+
 
         btnViewOnMap.setOnClickListener {
             val intent = Intent(this, MapsActivity::class.java)
@@ -91,6 +98,43 @@ class GaleryActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+
+
+    private fun showEditDialog(localizacao: Localizacao) {
+        val dialog = Dialog(this)
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_photo_edit_insert, null)
+        dialog.setContentView(dialogView)
+
+        val editTextDescricao = dialogView.findViewById<EditText>(R.id.etDescription)
+        val imageView = dialogView.findViewById<ImageView>(R.id.ivDialogPhoto)
+        val textViewInfo = dialogView.findViewById<TextView>(R.id.tvDialogInfo)
+        val textViewDate = dialogView.findViewById<TextView>(R.id.tvDialogDate)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSalvar)
+
+        val imageUri = Uri.parse(localizacao.imageUri)
+        imageView.setImageURI(imageUri)
+        textViewInfo.text = localizacao.nome
+        textViewDate.text = localizacao.dataAdd.toString();
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss();
+        }
+
+        btnSave.setOnClickListener {
+            localizacao.descricao = editTextDescricao.text.toString();
+            val dbHandler = DatabaseHandler(this)
+            dbHandler.insert(localizacao);
+            dbHandler.close();
+            dialog.dismiss();
+            Toast.makeText(
+                this,
+                "Foto Alterada no banco!\nEndereço: ${localizacao.nome}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
 }

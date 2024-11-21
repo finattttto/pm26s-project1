@@ -9,7 +9,14 @@
         android:layout_width="377dp"
         android:layout_height="wrap_content"
         android:paddingTop="16dp"
-        android:text="Descrição"
+        android:text="Descrição:"
+        android:textSize="20sp" />
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="377dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:inputType="text"
         android:textSize="16sp" />
 
     <ImageView
@@ -41,35 +48,24 @@
         android:gravity="center_horizontal">
 
         <Button
-            android:id="@+id/btnDelete"
+            android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:padding="8dp"
             android:backgroundTint="#FF5555"
-            android:text="Apagar"
+            android:text="Cancelar"
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
         <Button
-            android:id="@+id/btnEdit"
+            android:id="@+id/btnSalvar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:padding="8dp"
             android:backgroundTint="#007BFF"
-            android:text="Editar"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp" />
-
-        <Button
-            android:id="@+id/btnViewOnMap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:padding="8dp"
-            android:backgroundTint="#007BFF"
-            android:text="Ver no mapa"
+            android:text="Salvar"
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
     </LinearLayout>

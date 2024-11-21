@@ -1,6 +1,7 @@
 package com.example.registroturistico
 
 import android.Manifest
+import android.app.Dialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -11,11 +12,17 @@ import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -25,6 +32,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import android.app.ProgressDialog
@@ -34,7 +43,7 @@ public const val API_KEY_GEO = "AIzaSyC4fATB3MfFoI_QDU0d4m8o--odmnTFcKU"
 
 class MainActivity : AppCompatActivity(), LocationListener {
 
-    private lateinit var locationManager : LocationManager
+    private lateinit var locationManager: LocationManager
 
     private val CAMERA_REQUEST_CODE = 2
     private lateinit var photoUri: Uri
@@ -56,7 +65,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
             insets
         }
 
-        locationManager = getSystemService( Context.LOCATION_SERVICE ) as LocationManager
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         progressDialog = ProgressDialog(this).apply {
             setMessage("Obtendo localização...")
@@ -82,9 +91,10 @@ class MainActivity : AppCompatActivity(), LocationListener {
         ) {
             return;
         } else {
-            progressDialog.show()
-            locationManager.requestLocationUpdates( LocationManager.NETWORK_PROVIDER,
-                0, 0f, this );
+            locationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER,
+                0, 0f, this
+            );
         }
 
     }
@@ -192,13 +202,12 @@ class MainActivity : AppCompatActivity(), LocationListener {
                     longitude = longitude,
                     latitude = latitude,
                     nome = endereco ?: "Sem nome",
+                    descricao = "",
                     dataAdd = getCurrentDateTime(),
                     imageUri = photoUri.toString()
                 )
 
-                dbHandler.insert(localizacao)
-
-                Toast.makeText(this, "Foto salva no banco!\nEndereço: $endereco", Toast.LENGTH_LONG).show()
+                showSavePhotoDialog(localizacao)
             }
         }
     }
@@ -207,6 +216,44 @@ class MainActivity : AppCompatActivity(), LocationListener {
         val intent = Intent(this, GaleryActivity::class.java)
         startActivity(intent)
     }
+
+    private fun showSavePhotoDialog(localizacao: Localizacao) {
+        val dialog = Dialog(this)
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_photo_edit_insert, null)
+        dialog.setContentView(dialogView)
+
+        val editTextDescricao = dialogView.findViewById<EditText>(R.id.etDescription)
+        val imageView = dialogView.findViewById<ImageView>(R.id.ivDialogPhoto)
+        val textViewInfo = dialogView.findViewById<TextView>(R.id.tvDialogInfo)
+        val textViewDate = dialogView.findViewById<TextView>(R.id.tvDialogDate)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSalvar)
+
+        val imageUri = Uri.parse(localizacao.imageUri)
+        imageView.setImageURI(imageUri)
+        textViewInfo.text = localizacao.nome
+        textViewDate.text = localizacao.dataAdd.toString();
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss();
+        }
+
+        btnSave.setOnClickListener {
+            localizacao.descricao = editTextDescricao.text.toString();
+            val dbHandler = DatabaseHandler(this)
+            dbHandler.insert(localizacao);
+            dbHandler.close();
+            dialog.dismiss();
+            Toast.makeText(
+                this,
+                "Foto salva no banco!\nEndereço: ${localizacao.nome}",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+
+        dialog.show()
+    }
+
 
     fun getCurrentDateTime(): String {
         val date = Date()

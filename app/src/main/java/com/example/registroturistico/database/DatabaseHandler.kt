@@ -12,7 +12,7 @@ class DatabaseHandler (context : Context) : SQLiteOpenHelper ( context, DATABASE
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL("CREATE TABLE IF NOT EXISTS $TABLE_NAME ( _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "longitude DOUBLE, latitude DOUBLE, nome TEXT, dataAdd TEXT, imageUri TEXT )")
+                "longitude DOUBLE, latitude DOUBLE, nome TEXT, descricao TEXT, dataAdd TEXT, imageUri TEXT )")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -22,7 +22,7 @@ class DatabaseHandler (context : Context) : SQLiteOpenHelper ( context, DATABASE
 
     companion object {
         private const val DATABASE_NAME = "dbfile.sqlite"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
         const val TABLE_NAME = "pontos_turisticos"
     }
 
@@ -31,6 +31,7 @@ class DatabaseHandler (context : Context) : SQLiteOpenHelper ( context, DATABASE
 
         val registro = ContentValues()
         registro.put( "nome", localizacao.nome )
+        registro.put( "descricao", localizacao.descricao)
         registro.put( "latitude", localizacao.latitude )
         registro.put( "longitude", localizacao.longitude )
         registro.put( "dataAdd", localizacao.dataAdd )
@@ -73,11 +74,13 @@ class DatabaseHandler (context : Context) : SQLiteOpenHelper ( context, DATABASE
             val longitude = cursor.getDoubleOrNull(cursor, "longitude") ?: 0.0
             val latitude = cursor.getDoubleOrNull(cursor, "latitude") ?: 0.0
             val nome = cursor.getStringOrNull(cursor, "nome") ?: "Desconhecido"
+            val descricao = cursor.getStringOrNull(cursor, "descricao") ?: "Desconhecido"
             val dataAdd = cursor.getStringOrNull(cursor, "dataAdd") ?: "Data não disponível"
             val imageUri = cursor.getStringOrNull(cursor, "imageUri") ?: ""
 
-            locations.add(Localizacao(id, longitude, latitude, nome, dataAdd, imageUri))
+            locations.add(Localizacao(id, longitude, latitude, nome, descricao , dataAdd, imageUri))
         }
+        locations.forEach { println("Location: " + it.nome) }
 
         cursor.close() // Sempre fechar o cursor após o uso
         return locations
