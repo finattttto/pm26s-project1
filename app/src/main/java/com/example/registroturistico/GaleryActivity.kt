@@ -89,6 +89,7 @@ class GaleryActivity : AppCompatActivity() {
         }
 
         btnEdit.setOnClickListener{
+            dialog.dismiss()
             showEditDialog(localizacao)
         }
 

@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
     }
 
     private fun obterEnderecoAtual(callback: (String) -> Unit) {
-        if (latitude != null && longitude != null) {
+        if (latitude != 0.0 && longitude != 0.0) {
             Thread {
                 val enderecoUrl = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=$latitude,$longitude&key=$API_KEY_GEO"
                 val dados = fazerRequisicaoHttp(enderecoUrl)
@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(), LocationListener {
                 }
             }.start()
         } else {
-            callback("Coordenadas inválidas.")
+            callback("Carregando endereço. Tente novamente...")
         }
     }
 
