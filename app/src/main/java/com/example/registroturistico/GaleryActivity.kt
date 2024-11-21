@@ -88,7 +88,9 @@ class GaleryActivity : AppCompatActivity() {
             showDeleteDialog(localizacao)
         }
 
-
+        btnEdit.setOnClickListener{
+            showEditDialog(localizacao)
+        }
 
         btnViewOnMap.setOnClickListener {
             val intent = Intent(this, MapsActivity::class.java)
@@ -119,14 +121,15 @@ class GaleryActivity : AppCompatActivity() {
         textViewInfo.text = localizacao.nome
         textViewDate.text = localizacao.dataAdd.toString();
 
+
         btnCancel.setOnClickListener {
             dialog.dismiss();
         }
 
         btnSave.setOnClickListener {
-            localizacao.descricao = editTextDescricao.text.toString();
+            localizacao.descricao = editTextDescricao.text.toString()
             val dbHandler = DatabaseHandler(this)
-            dbHandler.insert(localizacao);
+            dbHandler.update(localizacao);
             dbHandler.close();
             dialog.dismiss();
             Toast.makeText(
@@ -135,6 +138,8 @@ class GaleryActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG
             ).show()
         }
+
+        dialog.show()
     }
 
 }

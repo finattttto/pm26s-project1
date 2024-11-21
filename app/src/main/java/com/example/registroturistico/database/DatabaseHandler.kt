@@ -40,6 +40,20 @@ class DatabaseHandler (context : Context) : SQLiteOpenHelper ( context, DATABASE
         db.insert( TABLE_NAME, null, registro )
     }
 
+    fun update( localizacao: Localizacao) {
+        val db = this.writableDatabase
+
+        val registro = ContentValues()
+        registro.put( "nome", localizacao.nome )
+        registro.put( "descricao", localizacao.descricao)
+        registro.put( "latitude", localizacao.latitude )
+        registro.put( "longitude", localizacao.longitude )
+        registro.put( "dataAdd", localizacao.dataAdd )
+        registro.put( "imageUri", localizacao.imageUri )
+
+        db.update( TABLE_NAME, registro, "_id=${localizacao._id}", null )
+    }
+
     fun listCursor() : Cursor {
         val db = this.readableDatabase
 
